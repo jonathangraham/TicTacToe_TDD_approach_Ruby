@@ -1,0 +1,112 @@
+require_relative 'TTT.rb'
+require 'minitest/autorun'
+
+
+class TestBoard < Minitest::Test
+
+	def test_create_new_board
+		assert_equal([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], generate_new_board)
+	end
+
+	def test_update_initial_board_at_position_0_with_X
+		assert_equal(['X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], update_board(generate_new_board, 0, 'X'))
+	end
+
+	def test_update_initial_board_at_position_0_with_O
+		assert_equal(['O', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], update_board(generate_new_board, 0, 'O'))
+	end
+
+	def test_update_initial_board_at_position_1_with_X
+		assert_equal([' ', 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' '], update_board(generate_new_board, 1, 'X'))
+	end
+
+	def test_empty_space
+		assert_equal(true, empty_space?(0,[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']))
+		assert_equal(false, empty_space?(0,['X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']))
+	end
+
+	def test_update_partial_full_board
+		assert_equal(['X', 'O', ' ', ' ', ' ', ' ', ' ', ' ', ' '], update_board(['X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 1, 'O'))
+	end
+
+	def test_full_board?
+		assert_equal(false, tie?([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']))
+		assert_equal(false, tie?(['X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']))
+		assert_equal(true, tie?(['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']))
+	end
+
+	def test_game_end_for_win?
+		assert_equal(false, win?([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 'X'))
+		assert_equal(true, win?(['X', 'X', 'X', ' ', ' ', ' ', ' ', ' ', ' '], 'X'))
+		assert_equal(true, win?([' ', ' ', ' ', 'O', 'O', 'O', ' ', ' ', ' '], 'O'))
+		assert_equal(false, win?([' ', ' ', ' ', 'X', 'O', 'X', ' ', ' ', ' '], 'O'))
+	end
+
+	def test_game_end?
+		assert_equal(false, game_end?([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']))
+		assert_equal(true, game_end?(['X', 'X', 'X', ' ', ' ', ' ', ' ', ' ', ' ']))
+	end
+
+	def test_competitor_to_play_next
+		assert_equal('X', competitor_to_play_next([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']))
+		assert_equal('O', competitor_to_play_next(['X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']))
+		assert_equal('X', competitor_to_play_next(['X', 'O', 'X', 'O', ' ', ' ', ' ', ' ', ' ']))
+	end
+
+	def test_next_available_space
+		assert_equal(0, next_available_space([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']))
+		assert_equal(0, next_available_space([' ', ' ', 'X', ' ', ' ', 'O', ' ', ' ', ' ']))
+		assert_equal(3, next_available_space(['X', 'O', 'X', ' ', ' ', ' ', ' ', ' ', ' ']))
+	end
+
+	def test_make_sequential_move
+		assert_equal(['X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], make_move([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 'sequential'))
+		assert_equal(['X', 'O', ' ', ' ', ' ', ' ', ' ', ' ', ' '], make_move(['X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 'sequential'))
+		assert_equal(['X', 'O', 'X', ' ', ' ', ' ', ' ', ' ', ' '], make_move(['X', 'O', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 'sequential'))
+	end
+
+	def test_play_game_sequential_moves
+		assert_equal(['X', 'O', 'X', 'O', 'X', 'O', 'X', ' ', ' '], play_new_game('sequential'))
+	end
+
+	def test_current_marker
+		assert_equal('X', current_marker(['X', 'O', 'X', 'O', 'X', 'O', 'X', ' ', ' ']))
+		assert_equal('O', current_marker(['X', 'O', 'X', ' ', 'O', ' ', 'X', 'O', ' ']))		
+	end
+
+	def test_generate_random_position
+		assert_equal(true, [0,1,2,3,4,5,6,7,8].include?(generate_random_position))
+	end
+
+	def test_generate_random_move
+		assert_equal(4, generate_random_move(['X', 'O', 'X', 'O', ' ', 'O', 'X', 'X', 'O']))
+		assert_equal(true, [4,5,6].include?(generate_random_move(['X', 'O', 'X', 'O', ' ', ' ', ' ', 'X', 'O'])))
+	end
+
+	def test_make_random_move
+		assert_equal(7, make_move(['X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 'random').count(' '))
+		assert_equal(['X', 'O', 'X', 'O', 'X', 'O', 'X', 'X', 'O'], make_move(['X', 'O', 'X', 'O', ' ', 'O', 'X', 'X', 'O'], 'random'))
+	end
+
+	def test_play_game_random_moves
+		board = play_new_game('random')
+		assert_equal(true, ((board.count(' ') < 5 && win?(board, 'X')) || ((board.count(' ') < 5 && win?(board, 'O')) || (board.count(' ') == 0 && tie?(board)))))
+	end
+
+	def test_available_spaces
+		assert_equal([7,8], available_spaces(['X', 'O', 'X', 'O', 'X', 'O', 'X', ' ', ' ']))
+	end
+
+	def test_generate_negamax_move_with_single_option
+		assert_equal(4, generate_negamax_move(['X', 'O', 'X', 'O', ' ', 'O', 'X', 'X', 'O']))
+		assert_equal(7, generate_negamax_move(['X', 'O', 'X', 'O', 'X', 'O', 'X', ' ', 'O']))
+	end
+
+	# def test_negamex_move_to_win
+	# 	assert_equal(6, generate_negamax_move(['X', ' ', 'O', 'X', 'O', 'X', ' ', ' ', 'O']))
+	# 	assert_equal(0, generate_negamax_move([' ', 'X', ' ', 'X', 'O', 'X', ' ', ' ', 'O']))
+	# 	assert_equal(8, generate_negamax_move(['X', 'O', ' ', 'O', 'X', ' ', ' ', ' ', ' ']))
+	# end
+
+
+end
