@@ -128,5 +128,8 @@ class TestBoard < Minitest::Test
 		assert_equal(1, generate_negamax_move([' ', ' ', 'X', ' ', 'O', ' ', 'X', ' ', ' ']))
 	end
 
-
+	def test_play_game_negamax_moves
+		board = play_new_game('negamax')
+		assert_equal(true, ((board.count(' ') < 5 && win?(board, 'X')) || ((board.count(' ') < 5 && win?(board, 'O')) || (board.count(' ') == 0 && tie?(board)))))
+	end
 end
