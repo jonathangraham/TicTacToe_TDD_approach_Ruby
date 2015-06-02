@@ -136,10 +136,11 @@ class Game
 		board.update_board(generate_move(board, play_type), board.marker_to_play_next)
 	end
 
-	def play_new_game(play_type)
+	def play_new_game(player1, player2)
 		board = Board.new([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '])
+		players = [player1, player2].cycle
 		until board.game_end? do
-			make_move(board, play_type)
+			make_move(board, players.next)
 		end
 		board
 	end
