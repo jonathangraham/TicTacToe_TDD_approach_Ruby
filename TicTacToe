@@ -1,103 +1,105 @@
-def generate_new_board
-	[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
-end
+class Board
+	attr_reader :board
 
-def update_board(board, position, letter)
-	board[position] = letter
-	board
-end
+	def initialize(board)
+		@board = board
+	end 
 
-def empty_space?(position, board)
-	board[position] == ' '
-end
+	def update_board(position, letter)
+		@board[position] = letter
+	end
 
-def tie?(board)
-	board.count(' ') == 0
-end
+	def empty_space?(position)
+		@board[position] == ' '
+	end
 
-def potential_winning_lines(board)
-		[[board[0],board[1],board[2]],[board[3],board[4],board[5]],[board[6],board[7],board[8]],[board[0],board[3],board[6]],[board[1],board[4],board[7]],[board[2],board[5],board[8]],[board[0],board[4],board[8]],[board[2],board[4],board[6]]] 
-end
+	def tie?()
+		@board.count(' ') == 0
+	end
 
-def win?(board, marker)
-	#marker = current_marker(board)
-	potential_winning_lines(board).map do |innerArray|
+	def potential_winning_lines()
+		[[@board[0],@board[1],@board[2]],
+		[@board[3],@board[4],@board[5]],
+		[@board[6],@board[7],@board[8]],
+		[@board[0],@board[3],@board[6]],
+		[@board[1],@board[4],@board[7]],
+		[@board[2],@board[5],@board[8]],
+		[@board[0],@board[4],@board[8]],
+		[@board[2],@board[4],@board[6]]] 
+	end
+
+	def win?(marker)
+		potential_winning_lines().map do |innerArray|
 			innerArray[0] == innerArray[1] && innerArray[1] == innerArray[2] && innerArray[0] == marker  
-	end.include? true
+		end.include? true
+	end
+
+	def game_end?()
+		marker = marker_just_played()
+		win?(marker) || tie?()
+	end
+
+	def marker_just_played()
+		if @board.count(' ')%2 == 0
+			'X'
+		else
+			'O'
+		end
+	end
+
+	def marker_to_play_next()
+		marker_just_played() == 'O' ? 'X' : 'O'
+	end
+
+	def available_spaces()
+		@board.each_index.select{|i| @board[i] == ' '}
+	end
+
 end
 
-def game_end?(board)
-	marker = current_marker(board)
-	win?(board, marker) || tie?(board)
-end
+class SequentialAI
 
-def competitor_to_play_next(board)
-	if board.count(' ')%2 == 1
-		'X'
-	else
-		'O'
+	def determine_move(board)
+		board.available_spaces.first
 	end
 end
 
-def make_move(board, level)
-	update_board(board, determine_move(board, level), competitor_to_play_next(board))
-end
 
-def determine_move(board, level)
-	if level == 'sequential'
-		next_available_space(board)
-	elsif level == 'random'
-		generate_random_move(board)
-	elsif level == 'negamax'
-		generate_negamax_move(board) 		
+class RandomAI
+
+
+	def generate_random_position
+		rand(9)
 	end
-end
 
-def next_available_space(board)
-	board.index(' ')
-end
-
-def play_new_game(level)
-	board = generate_new_board
-	until game_end?(board) do
-		make_move(board, level)
-	end
-	board
-end
-
-def current_marker(board)
-	competitor_to_play_next(board) == 'O' ? 'X' : 'O'
-end
-
-def generate_random_position
-	rand(9)
-end
-
-def generate_random_move(board)
-	position = generate_random_position
-	until empty_space?(position, board) || board.count(' ') == 0 do
+	def determine_move(board)
 		position = generate_random_position
+		until board.empty_space?(position) || board.tie? do
+			position = generate_random_position
+		end
+		position
 	end
-	position
 end
 
-def generate_negamax_move(board)
-	player = competitor_to_play_next(board)
-	depth = 1
-	negamax(board, player, depth)
-	return @negamax_move
-end
+class NegamaxAI
 
-def negamax(board, current_marker, depth)
+	def determine_move(board)
+		player = board.marker_to_play_next
+		depth = 1
+		negamax(board, player, depth)
+		return @negamax_move
+	end
+
+	def negamax(board, current_marker, depth)
 		opponent_marker = opponent(current_marker)
-    	if game_end?(board)
+    	if board.game_end?
       		return score(board, current_marker, opponent_marker, depth)
     	else
       		best_rank = -999
-      		available_spaces(board).each do |space|
-        		update_board(board, space, current_marker)
+      		board.available_spaces.each do |space|
+        		board.update_board(space, current_marker)
         		rank = -negamax(board, opponent_marker, depth + 1 )
-       			update_board(board, space, ' ')
+       			board.update_board(space, ' ')
 	       			if rank > best_rank
 	         			best_rank = rank
 	         			if depth == 1
@@ -107,23 +109,38 @@ def negamax(board, current_marker, depth)
      		end
      		return best_rank
 		end
-end
+	end
 
-def score(board, current_marker, opponent_marker, depth)
-	if win?(board, current_marker)
-		return 100 - depth
-	elsif win?(board, opponent_marker)
-	    return -(100 - depth)
-	else
-	    return 0
+	def score(board, current_marker, opponent_marker, depth)
+		if board.win?(current_marker)
+			return 100 - depth
+		elsif board.win?(opponent_marker)
+		    return -(100 - depth)
+		else
+		    return 0
+		end
+	end
+
+	def opponent(marker)
+		marker == "X" ? "O" : "X"
 	end
 end
 
-def available_spaces(board)
-	board.each_index.select{|i| board[i] == ' '}
-end
+class Game
 
-def opponent(marker)
-	marker == "X" ? "O" : "X"
-end
+	def generate_move(board, play_type)
+		play_type.new.determine_move(board)
+	end
 
+	def make_move(board, play_type)
+		board.update_board(generate_move(board, play_type), board.marker_to_play_next)
+	end
+
+	def play_new_game(play_type)
+		board = Board.new([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '])
+		until board.game_end? do
+			make_move(board, play_type)
+		end
+		board
+	end
+end
