@@ -47,7 +47,9 @@ def determine_move(board, level)
 	if level == 'sequential'
 		next_available_space(board)
 	elsif level == 'random'
-		generate_random_move(board) 		
+		generate_random_move(board)
+	elsif level == 'negamax'
+		generate_negamax_move(board) 		
 	end
 end
 
