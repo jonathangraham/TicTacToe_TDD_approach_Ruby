@@ -120,5 +120,13 @@ class TestBoard < Minitest::Test
 		assert_equal(5, generate_negamax_move(['X', 'X', ' ', 'O', 'O', ' ', 'X', ' ', ' ']))
 	end
 
+	def test_negamax_move_create_fork
+		assert_equal(2, generate_negamax_move(['O', ' ', ' ', ' ', ' ', ' ', 'X', 'O', 'X']))
+	end
+
+	def test_negamax_move_block_fork
+		assert_equal(1, generate_negamax_move([' ', ' ', 'X', ' ', 'O', ' ', 'X', ' ', ' ']))
+	end
+
 
 end
