@@ -108,5 +108,17 @@ class TestBoard < Minitest::Test
 		assert_equal(8, generate_negamax_move(['X', 'O', ' ', 'O', 'X', ' ', ' ', ' ', ' ']))
 	end
 
+	def test_negamax_move_to_block_opponent_win
+		assert_equal(7, generate_negamax_move(['X', 'O', 'X', ' ', 'O', ' ', ' ', ' ', ' ']))
+		assert_equal(8, generate_negamax_move(['X', 'O', ' ', 'O', 'X', 'X', ' ', ' ', ' ']))
+	end
+
+	def test_negamax_move_to_win_instead_block
+		assert_equal(6, generate_negamax_move(['X', ' ', 'O', 'X', ' ', 'O', ' ', ' ', ' ']))
+		assert_equal(8, generate_negamax_move(['X', 'X', 'O', 'X', ' ', 'O', ' ', ' ', ' ']))
+		assert_equal(2, generate_negamax_move(['X', 'X', ' ', 'O', 'O', ' ', ' ', ' ', ' ']))
+		assert_equal(5, generate_negamax_move(['X', 'X', ' ', 'O', 'O', ' ', 'X', ' ', ' ']))
+	end
+
 
 end
