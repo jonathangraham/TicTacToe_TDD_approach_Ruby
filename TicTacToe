@@ -80,7 +80,7 @@ def generate_random_move(board)
 end
 
 def generate_negamax_move(board)
-	player = current_marker(board)
+	player = competitor_to_play_next(board)
 	depth = 1
 	negamax(board, player, depth)
 	return @negamax_move
