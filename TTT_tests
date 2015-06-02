@@ -254,17 +254,24 @@ class TestGame < Minitest::Test
 	end
 
 	def test_play_game_sequential_moves
-		game = Game.new.play_new_game(SequentialAI)
+		game = Game.new.play_new_game(SequentialAI, SequentialAI)
 		assert_equal(['X', 'O', 'X', 'O', 'X', 'O', 'X', ' ', ' '], game.board)
 	end
 
 	def test_play_game_random_moves
-		game = Game.new.play_new_game(RandomAI)
+		game = Game.new.play_new_game(RandomAI, RandomAI)
 		assert_equal(true, [0,1,2,3,4].include?(game.board.count(' ')))
 	end
 
 	def test_play_game_negamax_moves
-		game = Game.new.play_new_game(NegamaxAI)
+		game = Game.new.play_new_game(NegamaxAI, NegamaxAI)
 		assert_equal(true, [0,1,2,3,4].include?(game.board.count(' ')))
 	end
+
+	def test_play_game_sequential_and_random
+		#test will fail if RandomAI randomly always chooses next sequential position
+		game = Game.new.play_new_game(SequentialAI, RandomAI)
+		assert_equal(false, ['X', 'O', 'X', 'O', 'X', 'O', 'X', ' ', ' '] == game.board)
+	end
+
 end
