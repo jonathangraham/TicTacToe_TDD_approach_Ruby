@@ -80,14 +80,14 @@ def generate_random_move(board)
 end
 
 def generate_negamax_move(board)
-	current_marker = opponent(current_marker)
+	player = current_marker(board)
 	depth = 1
-	negamax(board, current_marker, depth)
+	negamax(board, player, depth)
 	return @negamax_move
 end
 
 def negamax(board, current_marker, depth)
-		opponent_marker = competitor_to_play_next(board)
+		opponent_marker = opponent(current_marker)
     	if game_end?(board)
       		return score(board, current_marker, opponent_marker, depth)
     	else
