@@ -1,8 +1,8 @@
 class Board
 	attr_reader :board
 
-	def initialize(board)
-		@board = board
+	def initialize(grid_size)
+		@board = Array.new(grid_size * grid_size, ' ')
 	end 
 
 	def update_board(position, letter)
@@ -17,20 +17,54 @@ class Board
 		@board.count(' ') == 0
 	end
 
+	def rows()
+		rows = []
+		matrix = @board.each_slice(Math.sqrt(@board.length)).to_a
+		matrix.each do |innerArray|
+			rows << innerArray
+		end
+	end
+
+	def columns()
+		rows.transpose
+	end
+
+	def diaganols()
+		n = rows.length
+		diaganols = [first_diaganol(n), second_diaganol(n)]
+	end
+
+	def first_diaganol(n)
+		first_diaganol = []
+		a = 0
+		n.times do
+			first_diaganol << rows[a][a]
+			a = a + 1
+		end
+		first_diaganol
+	end
+
+	def second_diaganol(n)
+		second_diaganol = []
+		a = 0
+		b = n - 1
+		n.times do
+			second_diaganol << rows[a][b]
+			a = a + 1
+			b = b - 1
+		end
+		second_diaganol
+	end
+
 	def potential_winning_lines()
-		[[@board[0],@board[1],@board[2]],
-		[@board[3],@board[4],@board[5]],
-		[@board[6],@board[7],@board[8]],
-		[@board[0],@board[3],@board[6]],
-		[@board[1],@board[4],@board[7]],
-		[@board[2],@board[5],@board[8]],
-		[@board[0],@board[4],@board[8]],
-		[@board[2],@board[4],@board[6]]] 
+		rows | columns | diaganols 
 	end
 
 	def win?(marker)
 		potential_winning_lines().map do |innerArray|
-			innerArray[0] == innerArray[1] && innerArray[1] == innerArray[2] && innerArray[0] == marker  
+			innerArray.map do |e|
+				e == marker
+			end.count(true) == innerArray.length
 		end.include? true
 	end
 
@@ -40,10 +74,10 @@ class Board
 	end
 
 	def marker_just_played()
-		if @board.count(' ')%2 == 0
-			'X'
-		else
+		if (@board.length - @board.count(' '))%2 == 0
 			'O'
+		else
+			'X'
 		end
 	end
 
@@ -68,14 +102,14 @@ end
 class RandomAI
 
 
-	def generate_random_position
-		rand(9)
+	def generate_random_position(board)
+		rand(board.board.length)
 	end
 
 	def determine_move(board)
-		position = generate_random_position
+		position = generate_random_position(board)
 		until board.empty_space?(position) || board.tie? do
-			position = generate_random_position
+			position = generate_random_position(board)
 		end
 		position
 	end
@@ -136,8 +170,8 @@ class Game
 		board.update_board(generate_move(board, play_type), board.marker_to_play_next)
 	end
 
-	def play_new_game(player1, player2)
-		board = Board.new([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '])
+	def play_new_game(size, player1, player2)
+		board = Board.new(size)
 		players = [player1, player2].cycle
 		until board.game_end? do
 			make_move(board, players.next)
