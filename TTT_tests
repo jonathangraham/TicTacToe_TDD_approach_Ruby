@@ -283,8 +283,9 @@ class TestGame < Minitest::Test
 	end
 
 	def test_play_game_sequential_moves
-		game = Game.new.play_new_game(3, SequentialAI, SequentialAI)
-		assert_equal(['X', 'O', 'X', 'O', 'X', 'O', 'X', ' ', ' '], game.board)
+		game = Game.new
+		game_result = game.play_new_game(3, SequentialAI, SequentialAI)
+		assert_equal(['X', 'O', 'X', 'O', 'X', 'O', 'X', ' ', ' '], game_result.board)
 	end
 
 	def test_play_game_random_moves
@@ -300,6 +301,67 @@ class TestGame < Minitest::Test
 	def test_play_game_sequential_and_random
 		game = Game.new.play_new_game(3, SequentialAI, RandomAI)
 		assert_equal(true, game.game_end?)
+	end
+end
+
+class TestUI < Minitest::Test
+
+	# def test_start_game_consoleUI
+	# 	play = ConsoleUI.new
+	# 	assert_equal('Y', play.play?)
+	# end
+
+	def test_print_initial_3x3_board
+		board = Board.new(3)
+		play = ConsoleUI.new
+		assert_output(
+" | | 
+ | | 
+ | | 
+") {play.print_board(board)}
+	end
+
+	def test_print_3x3_board_with_index_positions
+		board = Board.new(3)
+		play = ConsoleUI.new
+		assert_output(
+"0|1|2
+3|4|5
+6|7|8
+") {play.print_index_board(board)}
+	end
+
+	def test_print_initial_4x4_board
+		board = Board.new(4)
+		play = ConsoleUI.new
+		assert_output(
+" | | | 
+ | | | 
+ | | | 
+ | | | 
+") {play.print_board(board)}
+	end
+
+	def test_print_updated_3x3_board
+		board = Board.new(3)
+		board.update_board(0, 'X')
+		play = ConsoleUI.new
+		assert_output(
+"X| | 
+ | | 
+ | | 
+") {play.print_board(board)}
+	end
+
+	def test_print_end_sequential_game_3x3_board
+		game = Game.new
+		game_result = game.play_new_game(3, SequentialAI, SequentialAI)
+		play = ConsoleUI.new
+		assert_output(
+"X|O|X
+O|X|O
+X| | 
+") {play.print_board(game_result)}
 	end
 
 end
