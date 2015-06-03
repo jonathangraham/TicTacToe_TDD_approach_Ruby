@@ -2,7 +2,8 @@ class Board
 	attr_reader :board
 
 	def initialize(grid_size)
-		@board = Array.new(grid_size * grid_size, ' ')
+		elements = grid_size * grid_size
+		@board = Array.new(elements, ' ')
 	end 
 
 	def update_board(position, letter)
@@ -18,11 +19,7 @@ class Board
 	end
 
 	def rows()
-		rows = []
-		matrix = @board.each_slice(Math.sqrt(@board.length)).to_a
-		matrix.each do |innerArray|
-			rows << innerArray
-		end
+		rows = @board.each_slice(Math.sqrt(@board.length)).to_a
 	end
 
 	def columns()
@@ -178,4 +175,30 @@ class Game
 		end
 		board
 	end
+end
+
+class ConsoleUI
+
+	# def play?
+	# 	puts "Press Y to play new game."
+	# 	gets.chomp.upcase
+	# end
+
+	def print_board(board)
+		board.rows.each do |row|
+			puts "#{row.join('|')}"
+		end
+	end
+
+	def print_index_board(board)
+		index = []
+		board.board.each_with_index do |e, i|
+			index << i
+		end
+		rows = index.each_slice(Math.sqrt(index.length)).to_a
+		rows.each do |row|
+			puts "#{row.join('|')}"
+		end
+	end
+
 end
