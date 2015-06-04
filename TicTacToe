@@ -1,10 +1,11 @@
 class Board
-	attr_reader :board
+	attr_reader :board, :index_board
 
 	def initialize(grid_size)
 		elements = grid_size * grid_size
 		@board = Array.new(elements, ' ')
-	end 
+		@index_board = Array(0..(elements - 1))
+	end
 
 	def update_board(position, letter)
 		@board[position] = letter
@@ -86,9 +87,20 @@ class Board
 		@board.each_index.select{|i| @board[i] == ' '}
 	end
 
+	def valid_space?(position)
+		@board[position] == ' '
+	end
+
+
 end
 
 class SequentialAI
+
+	attr_reader :name
+
+	def initialize()
+		@name = SequentialAI
+	end
 
 	def determine_move(board)
 		board.available_spaces.first
@@ -98,6 +110,11 @@ end
 
 class RandomAI
 
+	attr_reader :name
+
+	def initialize()
+		@name = RandomAI
+	end
 
 	def generate_random_position(board)
 		rand(board.board.length)
@@ -113,6 +130,12 @@ class RandomAI
 end
 
 class NegamaxAI
+
+	attr_reader :name
+
+	def initialize()
+		@name = NegamaxAI
+	end
 
 	def determine_move(board)
 		player = board.marker_to_play_next
@@ -157,48 +180,164 @@ class NegamaxAI
 	end
 end
 
+class Human
+
+	attr_reader :ui
+	attr_reader :name
+
+	def initialize(ui, name)
+		@ui = ui
+		@name = name
+	end
+
+	def determine_move(board)
+		response = ui.get_user_response
+		position = response.to_i
+		until board.valid_space?(position)
+			ui.print_valid_space_error
+			response = ui.get_user_response
+			position = response.to_i 
+		end
+		position
+	end
+end
+
 class Game
 
+	attr_accessor :ui
+
+	def initialize(ui)
+		@ui = ui
+	end
+
 	def generate_move(board, play_type)
-		play_type.new.determine_move(board)
+		play_type.determine_move(board)
 	end
 
 	def make_move(board, play_type)
 		board.update_board(generate_move(board, play_type), board.marker_to_play_next)
 	end
 
-	def play_new_game(size, player1, player2)
-		board = Board.new(size)
+	def play_new_game(board, player1, player2)
 		players = [player1, player2].cycle
 		until board.game_end? do
-			make_move(board, players.next)
+			current_player = players.next
+			ui.print_player_turn(current_player)
+			ui.print_board(board.index_board)
+			make_move(board, current_player)
+			ui.print_board(board.board)
 		end
+		ui.print_result(board, current_player)
 		board
 	end
+
+	def game_setup
+		ui.ask_play?
+		if ui.get_user_response == 'Y'
+			board = board_setup
+			player1 = player_setup(1)
+			player2 = player_setup(1)
+			play_new_game(board, player1, player2)
+		else
+			exit
+		end
+		game_setup
+	end
+
+	def board_setup
+		ui.ask_board_size
+		board_size = ui.get_user_response.to_i
+		Board.new(board_size)
+	end
+
+	def player_setup(number)
+		ui.ask_player_type(number)
+		player_type = ui.get_user_response
+		if player_type == 'H'
+			ui.ask_player_name
+			name = ui.get_user_response
+			Human.new(ui, name)
+		elsif player_type == 'C'
+			NegamaxAI.new
+		else
+			player_setup(number)
+		end
+	end
+
 end
 
-class ConsoleUI
+class ConsoleReadWrite
 
-	# def play?
-	# 	puts "Press Y to play new game."
-	# 	gets.chomp.upcase
-	# end
+	def print_line(str)
+		puts str
+	end
+
+	def read_line
+		gets.chomp.upcase
+	end
+
+end
+
+class UI
+
+	attr_reader :interface
+
+	def initialize(interface)
+		@interface = interface
+	end
+
+	def ask_play?()
+		@interface.print_line("Press Y to play new game.")
+	end
+
+	def ask_board_size()
+		@interface.print_line("Board size? (eg type '3' for a 3x3 board)")
+	end
+
+	def ask_player_type(number)
+		@interface.print_line("Player #{number}: Human(H) or Computer(C)?")
+	end
+
+	def ask_player_name
+		@interface.print_line("What is your name?")
+	end
+
+	def ask_computer_level
+		@interface.print_line("Easy(1), Moderate(2) or Hard(3)?")
+	end
+
+	def get_user_response
+		@interface.read_line
+	end
 
 	def print_board(board)
-		board.rows.each do |row|
-			puts "#{row.join('|')}"
+		lines = board.each_slice(Math.sqrt(board.length)).to_a
+		lines.each do |line|
+			@interface.print_line("#{line.join('|')}")
 		end
 	end
 
-	def print_index_board(board)
-		index = []
-		board.board.each_with_index do |e, i|
-			index << i
-		end
-		rows = index.each_slice(Math.sqrt(index.length)).to_a
-		rows.each do |row|
-			puts "#{row.join('|')}"
-		end
+	def print_player_turn(player)
+		@interface.print_line("#{player.name} to go next. Where do you want to play")
 	end
 
+	def print_valid_space_error()
+		@interface.print_line("Please enter a valid space")
+	end
+
+	def print_result(board, player)
+		if board.win?(board.marker_just_played)
+			@interface.print_line("#{player.name} wins!")
+		else
+			@interface.print_line("Game tied")
+		end
+	end
 end
+
+
+interface = ConsoleReadWrite.new
+ui = UI.new(interface)
+game = Game.new(ui)
+game.game_setup
+
+
