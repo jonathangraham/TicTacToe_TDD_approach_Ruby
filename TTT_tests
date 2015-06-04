@@ -49,6 +49,14 @@ class TestBoard < Minitest::Test
 		assert_equal([['0', '1', '2'], ['3', '4', '5'], ['6', '7', '8'], ["0", "3", "6"], ["1", "4", "7"], ["2", "5", "8"],["0", "4", "8"], ["2", "4", "6"]], board.potential_winning_lines)
 	end
 
+	def test_potantial_winning_lines_2
+		board = Board.new(5)
+		test_board = Array (0..24)
+		replace_initial_board_for_tests(board, test_board)		
+		number_winning_lines = board.potential_winning_lines
+		assert_equal(12, number_winning_lines.length)
+	end
+
 	def test_empty_space_returns_true_with_empty_space?
 		board = Board.new(3)
 		assert_equal(true, board.empty_space?(0))
@@ -136,6 +144,14 @@ class TestBoard < Minitest::Test
 		board = Board.new(2) 
 		replace_initial_board_for_tests(board, ['X', ' ', 'X', ' '])
 		assert_equal([1,3], board.available_spaces)
+	end
+
+	def test_valid_space
+		board = Board.new(3) 
+		replace_initial_board_for_tests(board, ['X', 'O', 'X', 'O', 'X', 'O', 'X', ' ', ' '])
+		assert_equal(true, board.valid_space?(8))
+		assert_equal(false, board.valid_space?(0))
+		assert_equal(false, board.valid_space?(10))
 	end
 end
 
@@ -243,125 +259,152 @@ class TestGame < Minitest::Test
 	def test_sequential_game_move_determination
 		board = Board.new(3)
 		replace_initial_board_for_tests(board, ['X', 'O', 'X', ' ', ' ', ' ', ' ', ' ', ' '])
-		game = Game.new
-		assert_equal(3, game.generate_move(board, SequentialAI))
+		mock_console_read_write = MockConsoleReadWrite.new
+		ui = UI.new(mock_console_read_write)
+		game = Game.new(ui)
+		assert_equal(3, game.generate_move(board, SequentialAI.new))
 	end
 
 	def test_random_game_move_determination
 		board = Board.new(3)
 		replace_initial_board_for_tests(board, ['X', 'O', 'X', ' ', ' ', 'O', 'X', 'O', 'X'])
-		game = Game.new
-		assert_equal(true, [3,4].include?(game.generate_move(board, RandomAI)))
+		mock_console_read_write = MockConsoleReadWrite.new
+		ui = UI.new(mock_console_read_write)
+		game = Game.new(ui)
+		assert_equal(true, [3,4].include?(game.generate_move(board, RandomAI.new)))
 	end
 
 	def test_negamax_game_move_determination
 		board = Board.new(3)
 		replace_initial_board_for_tests(board, [' ', ' ', 'X', ' ', 'O', ' ', 'X', ' ', ' '])
-		game = Game.new
-		assert_equal(1, game.generate_move(board, NegamaxAI))
+		mock_console_read_write = MockConsoleReadWrite.new
+		ui = UI.new(mock_console_read_write)
+		game = Game.new(ui)
+		assert_equal(1, game.generate_move(board, NegamaxAI.new))
 	end
 
 	def test_make_sequential_move
 		board = Board.new(3)
 		replace_initial_board_for_tests(board, ['X', 'O', 'X', ' ', ' ', ' ', ' ', ' ', ' '])
-		game = Game.new.make_move(board, SequentialAI)
+		mock_console_read_write = MockConsoleReadWrite.new
+		ui = UI.new(mock_console_read_write)
+		game = Game.new(ui)
+		game.make_move(board, SequentialAI.new)
 		assert_equal(['X', 'O', 'X', 'O', ' ', ' ', ' ', ' ', ' '], board.board)
 	end	
 
 	def test_make_random_move
 		board = Board.new(3)
 		replace_initial_board_for_tests(board, ['X', 'O', 'X', ' ', ' ', ' ', ' ', ' ', ' '])
-		game = Game.new.make_move(board, RandomAI)
+		mock_console_read_write = MockConsoleReadWrite.new
+		ui = UI.new(mock_console_read_write)
+		game = Game.new(ui)
+		game.make_move(board, RandomAI.new)
 		assert_equal(5, board.board.count(' '))
 	end	
 
 	def test_make_negamax_move
 		board = Board.new(3)
 		replace_initial_board_for_tests(board, [' ', ' ', 'X', ' ', 'O', ' ', 'X', ' ', ' '])
-		game = Game.new.make_move(board, NegamaxAI)
+		mock_console_read_write = MockConsoleReadWrite.new
+		ui = UI.new(mock_console_read_write)
+		game = Game.new(ui)
+		game.make_move(board, NegamaxAI.new)
 		assert_equal([' ', 'O', 'X', ' ', 'O', ' ', 'X', ' ', ' '], board.board)
 	end
 
 	def test_play_game_sequential_moves
-		game = Game.new
-		game_result = game.play_new_game(3, SequentialAI, SequentialAI)
+		board = Board.new(3)
+		mock_console_read_write = MockConsoleReadWrite.new
+		ui = UI.new(mock_console_read_write)
+		game = Game.new(ui)
+		game_result = game.play_new_game(board, SequentialAI.new, SequentialAI.new)
 		assert_equal(['X', 'O', 'X', 'O', 'X', 'O', 'X', ' ', ' '], game_result.board)
 	end
 
 	def test_play_game_random_moves
-		game = Game.new.play_new_game(3, RandomAI, RandomAI)
-		assert_equal(true, [0,1,2,3,4].include?(game.board.count(' ')))
+		board = Board.new(3)
+		mock_console_read_write = MockConsoleReadWrite.new
+		ui = UI.new(mock_console_read_write)
+		game = Game.new(ui)
+		game_result = game.play_new_game(board, RandomAI.new, RandomAI.new)
+		assert_equal(true, [0,1,2,3,4].include?(game_result.board.count(' ')))
 	end
 
 	def test_play_game_random_and_negamax_moves
-		game = Game.new.play_new_game(3, RandomAI, NegamaxAI)
-		assert_equal(true, game.game_end?)
+		board = Board.new(3)
+		mock_console_read_write = MockConsoleReadWrite.new
+		ui = UI.new(mock_console_read_write)
+		game = Game.new(ui)
+		game_result = game.play_new_game(board, RandomAI.new, NegamaxAI.new)
+		assert_equal(true, game_result.game_end?)
 	end
 
 	def test_play_game_sequential_and_random
-		game = Game.new.play_new_game(3, SequentialAI, RandomAI)
-		assert_equal(true, game.game_end?)
+		output = MockConsoleReadWrite.new
+		ui = UI.new(output)
+		board = Board.new(3)
+		game = Game.new(ui)
+		final_board = game.play_new_game(board, SequentialAI.new, RandomAI.new)
+		assert_equal(true, final_board.game_end?)
 	end
 end
 
+class MockConsoleReadWrite
+	attr_accessor :lines_printed
+	attr_accessor :lines_to_read
+
+	def initialize
+		@lines_printed =[]
+		@lines_to_read = []
+	end
+
+	def print_line(str)
+		@lines_printed << str
+	end
+
+	def read_line
+		str = "read_line called"
+		@lines_to_read << str
+	end
+end
+
+
 class TestUI < Minitest::Test
 
-	# def test_start_game_consoleUI
-	# 	play = ConsoleUI.new
-	# 	assert_equal('Y', play.play?)
-	# end
+	def test_ask_play?
+		mock_console_read_write = MockConsoleReadWrite.new
+		play = UI.new(mock_console_read_write)
+		array_lines_printed = play.ask_play?
+		assert_equal(mock_console_read_write.lines_printed[0], array_lines_printed[0])
+		assert_equal(1, array_lines_printed.length)
+	end
+
+	def test_get_response
+		mock_console_read_write = MockConsoleReadWrite.new
+		play = UI.new(mock_console_read_write)
+		array_lines_read = play.get_user_response
+		assert_equal(mock_console_read_write.lines_to_read[0], array_lines_read[0])		
+	end
 
 	def test_print_initial_3x3_board
+		mock_console_read_write = MockConsoleReadWrite.new
 		board = Board.new(3)
-		play = ConsoleUI.new
-		assert_output(
-" | | 
- | | 
- | | 
-") {play.print_board(board)}
+		play = UI.new(mock_console_read_write)
+		assert_equal(3, play.print_board(board.board).length)
 	end
 
-	def test_print_3x3_board_with_index_positions
-		board = Board.new(3)
-		play = ConsoleUI.new
-		assert_output(
-"0|1|2
-3|4|5
-6|7|8
-") {play.print_index_board(board)}
-	end
-
-	def test_print_initial_4x4_board
+	def test_print_4x4_board_with_index_positions
+		mock_console_read_write = MockConsoleReadWrite.new
 		board = Board.new(4)
-		play = ConsoleUI.new
-		assert_output(
-" | | | 
- | | | 
- | | | 
- | | | 
-") {play.print_board(board)}
+		play = UI.new(mock_console_read_write)
+		assert_equal(4, play.print_board(board.index_board).length)
 	end
 
-	def test_print_updated_3x3_board
-		board = Board.new(3)
-		board.update_board(0, 'X')
-		play = ConsoleUI.new
-		assert_output(
-"X| | 
- | | 
- | | 
-") {play.print_board(board)}
-	end
-
-	def test_print_end_sequential_game_3x3_board
-		game = Game.new
-		game_result = game.play_new_game(3, SequentialAI, SequentialAI)
-		play = ConsoleUI.new
-		assert_output(
-"X|O|X
-O|X|O
-X| | 
-") {play.print_board(game_result)}
+	def test_print_player_to_go_next
+		mock_console_read_write = MockConsoleReadWrite.new		
+		play = UI.new(mock_console_read_write)
+		assert_equal(mock_console_read_write.lines_printed, play.print_player_turn(NegamaxAI))
 	end
 
 end
