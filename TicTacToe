@@ -1,10 +1,11 @@
 class Board
-	attr_reader :board, :index_board
+	attr_reader :board, :index_board, :x_in_a_row
 
-	def initialize(grid_size)
+	def initialize(grid_size, x_in_a_row)
 		elements = grid_size * grid_size
 		@board = Array.new(elements, ' ')
 		@index_board = Array(0..(elements - 1))
+		@x_in_a_row = x_in_a_row
 	end
 
 	def update_board(position, letter)
@@ -59,11 +60,22 @@ class Board
 	end
 
 	def win?(marker)
-		potential_winning_lines().map do |innerArray|
-			innerArray.map do |e|
-				e == marker
-			end.count(true) == innerArray.length
-		end.include? true
+		checked_lines = potential_winning_lines().map do |innerArray|
+			winning_line?(innerArray, marker).include? true
+		end
+		checked_lines.include? true
+	end
+
+	def winning_line?(innerArray, marker)
+		arr_booleans = []
+		innerArray.map do |e|
+			if e == marker
+				arr_booleans << true
+			else
+				arr_booleans = []
+			end
+			arr_booleans.length >= @x_in_a_row
+		end
 	end
 
 	def game_end?()
@@ -90,8 +102,6 @@ class Board
 	def valid_space?(position)
 		@board[position] == ' '
 	end
-
-
 end
 
 class SequentialAI
@@ -247,7 +257,9 @@ class Game
 	def board_setup
 		ui.ask_board_size
 		board_size = ui.get_user_response.to_i
-		Board.new(board_size)
+		ui.ask_how_many_in_row
+		x_in_a_row = ui.get_user_response.to_i
+		Board.new(board_size, x_in_a_row)
 	end
 
 	def player_setup(number)
@@ -263,7 +275,6 @@ class Game
 			player_setup(number)
 		end
 	end
-
 end
 
 class ConsoleReadWrite
@@ -275,7 +286,6 @@ class ConsoleReadWrite
 	def read_line
 		gets.chomp.upcase
 	end
-
 end
 
 class UI
@@ -292,6 +302,10 @@ class UI
 
 	def ask_board_size()
 		@interface.print_line("Board size? (eg type '3' for a 3x3 board)")
+	end
+
+	def ask_how_many_in_row()
+		@interface.print_line("How many in a row needed to win? Can't be more than board size.")
 	end
 
 	def ask_player_type(number)
@@ -335,9 +349,9 @@ class UI
 end
 
 
-interface = ConsoleReadWrite.new
-ui = UI.new(interface)
-game = Game.new(ui)
-game.game_setup
+# interface = ConsoleReadWrite.new
+# ui = UI.new(interface)
+# game = Game.new(ui)
+# game.game_setup
 
 
