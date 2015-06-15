@@ -1,0 +1,15 @@
+<p>
+Player 1: <strong style="color: blue; font-size: 2em;"><%= player1.class %> (<%= player1.name %>)</strong>.
+Player 2: <strong style="color: blue; font-size: 2em;"><%= player2.class %></strong>.
+Board size: <strong style="color: blue; font-size: 2em;"><%= board_size %></strong>.
+Win length: <strong style="color: blue; font-size: 2em;"><%= win_size %></strong>.
+<br/>
+
+New board: <br/>
+<% lines = board.each_slice(Math.sqrt(board.length)) %>
+<% lines.each do |line| %>
+  <%= line.join(' | ') %>
+  <br/>
+<% end %>
+
+</p>
