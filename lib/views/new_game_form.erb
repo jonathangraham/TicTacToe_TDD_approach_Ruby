@@ -1,0 +1,66 @@
+<h2 style=color:red>Customize your Game</h2>
+
+<!-- <form action="/hello/" method="POST">
+    A Greeting: <input type="text" name="greeting">
+    <br/>
+    Your Name: <input type="text" name="name">
+    <br/>
+    <input type="submit">
+</form> -->
+
+<!-- Select player<form action="/hello/" method="POST">
+<select name="name">
+<option value="name">Human</option>
+<option value="greeting">Computer</option>
+</select>
+<br><br>
+<input type="submit">
+</form> -->
+
+<form action="/new_game" method="POST">
+    Player 1:
+    <br/> 
+    <input type="radio" name="player1" value="Human" checked>Human 
+    <br/>
+    If Human, type your name: <input type="text" name="player1_name">
+    <br/>
+    <br/>
+    <input type="radio" name="player1" value="NegamaxAI">Computer
+    <br/>
+    If Computer, select level:  
+    <select name="player1_level">
+    <option value="Easy">Easy</option>
+    <option value="Moderate">Moderate</option>
+    <option value="Hard">Hard</option>
+    </select>
+    <br/>
+    <br/>
+    <br/>
+    
+    Player 2:
+    <br/> 
+    <input type="radio" name="player2" value="Human" checked>Human 
+    <br/>
+    If Human, type your name: <input type="text" name="player2_name">
+    <br/>
+    <br/>
+    <input type="radio" name="player2" value="RandomAI">Computer
+    <br/>
+    If Computer, select level:  
+    <select name="player2_level">
+    <option value="Easy">Easy</option>
+    <option value="Moderate">Moderate</option>
+    <option value="Hard">Hard</option>
+    </select>
+    <br/>
+    <br/>
+    <br/>
+
+    Select the Board size: <input type="number" min="2" name="board_size">
+    <br/>
+    Select the Number in row to win (can't be more than the board size): <input type="number" min="2" name="win_size">
+    <br/>
+    <!-- Your Name: <input type="text" name="greeting">
+    <br/> -->
+    <input type="submit">
+</form>
