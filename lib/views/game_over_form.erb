@@ -1,0 +1,24 @@
+<form action="/game_over" method="POST">
+<p>
+
+<strong style="color: blue; font-size: 2em;"> Status: <%= @message %> <br/> </strong>
+<br/> <br/> 
+
+current board: <br/> <br/>
+<% lines = board.each_slice(Math.sqrt(board.length)) %>
+<% lines.each do |line| %>
+  	<%= line.join(' | ') %>
+  	<br/>
+<% end %> <br/> <br/>
+
+Would you like to play again? 
+<select name="play_again">
+    <option value="Yes">Yes</option>
+    <option value="No">No</option>
+    </select>
+<br/><br/>
+<input type="submit">
+
+
+</p>
+</form>
