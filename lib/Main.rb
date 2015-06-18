@@ -38,13 +38,31 @@ class Main
 		ui.ask_player_type(number)
 		player_type = ui.get_user_response
 		if player_type == 'H'
-			ui.ask_player_name
-			name = ui.get_user_response
-			Human.new(name)
+			human_setup
 		elsif player_type == 'C'
-			RandomAI.new
+			computer_setup
 		else
 			player_setup(number)
+		end
+	end
+
+	def human_setup()
+		ui.ask_player_name
+		name = ui.get_user_response
+		Human.new(name)
+	end
+
+	def computer_setup()
+		ui.ask_computer_level
+		level = ui.get_user_response
+		if level == '1'
+			SequentialAI.new('Computer_easy')
+		elsif level == '2'
+			RandomAI.new('Computer_moderate')
+		elsif level == '3'
+			NegamaxAI.new('Computer_hard')
+		else
+			computer_setup
 		end
 	end
 
@@ -57,6 +75,7 @@ class Main
 			game.make_move(board, position)
 		end
 		ui.display_end_result(board, current_player)
+		play_again?
 	end
 
 	def get_move(current_player)
@@ -77,6 +96,16 @@ class Main
 		end
 		position
 	end
+
+	def play_again?
+		ui.ask_play?
+		if ui.get_user_response.chomp.upcase == 'Y'
+			Main.new.play_game 
+		else
+			exit
+		end
+	end		
+
 end
 
 
@@ -84,19 +113,6 @@ end
 play = Main.new
 play.play_game
 
-
-	# def game_cycle
-	# 	ui.ask_play?
-	# 	if ui.get_user_response == 'Y'
-	# 		board = board_setup
-	# 		player1 = player_setup(1)
-	# 		player2 = player_setup(2)
-	# 		play_new_game(board, player1, player2)
-	# 	else
-	# 		exit
-	# 	end
-	# 	game_cycle
-	# end
 
 
 
