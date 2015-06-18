@@ -19,8 +19,8 @@ class TestGame < Minitest::Test
 	
 	def test_sequential_game_move_determination
 		board = Board.new(3, 3)
-		player1 = SequentialAI.new
-		player2 = SequentialAI.new
+		player1 = SequentialAI.new('Comp')
+		player2 = SequentialAI.new('Comp')
 		replace_initial_board_for_tests(board, ['X', 'O', 'X', ' ', ' ', ' ', ' ', ' ', ' '])
 		mock_console_read_write = MockConsoleReadWrite.new
 		ui = UI.new(mock_console_read_write)
@@ -30,8 +30,8 @@ class TestGame < Minitest::Test
 
 	def test_random_game_move_determination
 		board = Board.new(3, 3)
-		player1 = RandomAI.new
-		player2 = RandomAI.new
+		player1 = RandomAI.new('Comp')
+		player2 = RandomAI.new('Comp')
 		replace_initial_board_for_tests(board, ['X', 'O', 'X', ' ', ' ', 'O', 'X', 'O', 'X'])
 		mock_console_read_write = MockConsoleReadWrite.new
 		ui = UI.new(mock_console_read_write)
@@ -41,8 +41,8 @@ class TestGame < Minitest::Test
 
 	def test_negamax_game_move_determination
 		board = Board.new(3, 3)
-		player1 = RandomAI.new
-		player2 = NegamaxAI.new
+		player1 = RandomAI.new('Comp')
+		player2 = NegamaxAI.new('Comp')
 		replace_initial_board_for_tests(board, [' ', ' ', 'X', ' ', 'O', ' ', 'X', ' ', ' '])
 		mock_console_read_write = MockConsoleReadWrite.new
 		ui = UI.new(mock_console_read_write)
@@ -52,8 +52,8 @@ class TestGame < Minitest::Test
 
 	def test_make_move
 		board = Board.new(3, 3)
-		player1 = SequentialAI.new
-		player2 = SequentialAI.new
+		player1 = SequentialAI.new('Comp')
+		player2 = SequentialAI.new('Comp')
 		replace_initial_board_for_tests(board, ['X', 'O', 'X', 'O', ' ', ' ', ' ', ' ', ' '])
 		mock_console_read_write = MockConsoleReadWrite.new
 		ui = UI.new(mock_console_read_write)
