@@ -2,8 +2,8 @@ class SequentialAI
 
 	attr_reader :name
 
-	def initialize()
-		@name = SequentialAI
+	def initialize(name)
+		@name = name
 	end
 
 	def determine_move(board)
