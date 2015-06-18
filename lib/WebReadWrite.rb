@@ -32,6 +32,10 @@ class WebReadWrite < Sinatra::Base
     player2_level = params[:player2_level]
     BOARD_SIZE = params[:board_size].to_i
     WIN_SIZE = params[:win_size].to_i
+    if WIN_SIZE > BOARD_SIZE
+      WIN_SIZE = BOARD_SIZE
+    end    
+    
 
     if PLAYER1 == 'Human'
     	PLAYER1 = Human.new(player1_name)
