@@ -2,8 +2,8 @@ class RandomAI
 
 	attr_reader :name
 
-	def initialize()
-		@name = RandomAI
+	def initialize(name)
+		@name = name
 	end
 
 	def generate_random_position(board)
