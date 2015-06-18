@@ -126,6 +126,6 @@ class Board
 	end
 
 	def valid_space?(position)
-		@board[position] == ' '
+		@board[position] == ' ' && @index_board.include?(position)
 	end
 end
