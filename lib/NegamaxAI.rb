@@ -2,8 +2,8 @@ class NegamaxAI
 
 	attr_reader :name
 
-	def initialize()
-		@name = NegamaxAI
+	def initialize(name)
+		@name = name
 	end
 
 	def determine_move(board)
