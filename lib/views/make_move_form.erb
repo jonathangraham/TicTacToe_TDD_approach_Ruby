@@ -7,21 +7,44 @@
 <br/>
 
 <strong style="color: blue; font-size: 2em;"> Status: <%= @message %> <br/> </strong>
-<br/> <br/> <br/>
+<br/> <br/>
+
+<style>
+table, td {
+    border: 1px solid black;
+}
+td { 
+	border-spacing: 0;
+	height: 25px;
+	width: 25px;
+	margin: 0; padding: 0;
+	text-align: center;
+}
+</style>
 
 board positions: <br/> <br/>
+<table>
 <% lines = board_index.each_slice(Math.sqrt(board.length)) %>
 <% lines.each do |line| %>
-	<%= line.join(' | ') %>
-	<br/> 
-<% end %> <br/> <br/>
+	<tr>
+	<% line.each do |position| %>
+		<td><%= position %></td>
+	<% end %>	
+	</tr> 
+<% end %>
+</table> <br/> <br/>
 
 current board: <br/> <br/>
+<table>
 <% lines = board.each_slice(Math.sqrt(board.length)) %>
 <% lines.each do |line| %>
-  	<%= line.join(' | ') %>
-  	<br/>
-<% end %> <br/> <br/>
+	<tr>
+	<% line.each do |position| %>
+		<td><%= position %></td>
+	<% end %>	
+	</tr> 
+<% end %>
+</table> <br/> <br/>
 
 Where would you like to move? <input type="number" name="move">
 <br/><br/>
