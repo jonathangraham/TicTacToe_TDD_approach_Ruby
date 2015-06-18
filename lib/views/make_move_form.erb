@@ -1,0 +1,32 @@
+<form action="/make_move" method="POST">
+<p>
+<strong style="color: red; font-size: 1em;">Player 1 (<%= player1.name %>) is X.</strong><br/>
+<strong style="color: red; font-size: 1em;">Player 2 (<%= player2.name %>) is O.</strong><br/>
+<strong style="color: red; font-size: 1em;">Board size: <%= board_size %>.</strong><br/>
+<strong style="color: red; font-size: 1em;">Number in row to win: <%= win_size %>.</strong><br/>
+<br/>
+
+<strong style="color: blue; font-size: 2em;"> Status: <%= @message %> <br/> </strong>
+<br/> <br/> <br/>
+
+board positions: <br/> <br/>
+<% lines = board_index.each_slice(Math.sqrt(board.length)) %>
+<% lines.each do |line| %>
+	<%= line.join(' | ') %>
+	<br/> 
+<% end %> <br/> <br/>
+
+current board: <br/> <br/>
+<% lines = board.each_slice(Math.sqrt(board.length)) %>
+<% lines.each do |line| %>
+  	<%= line.join(' | ') %>
+  	<br/>
+<% end %> <br/> <br/>
+
+Where would you like to move? <input type="number" name="move">
+<br/><br/>
+<input type="submit">
+
+
+</p>
+</form>
