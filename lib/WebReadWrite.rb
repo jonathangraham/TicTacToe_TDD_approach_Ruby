@@ -4,11 +4,11 @@ require '/Users/jonathangraham/TTT_TDD/lib/RandomAI'
 require '/Users/jonathangraham/TTT_TDD/lib/NegamaxAI'
 require '/Users/jonathangraham/TTT_TDD/lib/Human'
 require '/Users/jonathangraham/TTT_TDD/lib/Game'
-require '/Users/jonathangraham/TTT_TDD/lib/WebReadWrite'
+#require '/Users/jonathangraham/TTT_TDD/lib/WebReadWrite'
 require 'sinatra'
 
 
-class WebReadWrite < Sinatra::Base
+#class WebReadWrite < Sinatra::Base
 
   enable :sessions
 
@@ -158,4 +158,6 @@ class WebReadWrite < Sinatra::Base
 
   end
 
-end
+#end
+
+
