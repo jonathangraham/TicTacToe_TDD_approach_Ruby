@@ -1,9 +1,10 @@
 class RandomAI
 
-	attr_reader :name
+	attr_reader :name, :type
 
 	def initialize(name)
 		@name = name
+		@type = 'Computer'
 	end
 
 	def generate_random_position(board)
