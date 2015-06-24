@@ -27,70 +27,27 @@ class TestBoard < Minitest::Test
 		assert_equal([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], board.board)
 	end
 
-	def test_rows
+	def test_create_new_index_board_3x3
 		board = Board.new(3, 3)
-		replace_initial_board_for_tests(board, ["0", "1", "2", "3", "4", "5", "6", "7", "8"])
-		assert_equal([["0", "1", "2"], ["3", "4", "5"], ["6", "7", "8"]], board.rows)
+		assert_equal([0,1,2,3,4,5,6,7,8], board.index_board)
 	end
 
-	def test_columns
+	def test_update_board
 		board = Board.new(3, 3)
-		replace_initial_board_for_tests(board, ["0", "1", "2", "3", "4", "5", "6", "7", "8"])
-		assert_equal([["0", "3", "6"], ["1", "4", "7"], ["2", "5", "8"]], board.columns)
+		board.update_board(2, 'X')
+		assert_equal([' ', ' ', 'X', ' ', ' ', ' ', ' ', ' ', ' '], board.board)
 	end
 
-	# def test_diaganols
-	# 	board = Board.new(3, 3)
-	# 	replace_initial_board_for_tests(board, ["0", "1", "2", "3", "4", "5", "6", "7", "8"])
-	# 	assert_equal([["0", "4", "8"], ["2", "4", "6"]], board.diaganols)
-	# end
-
-	# def test_diaganols_4x4
-	# 	board = Board.new(4, 4)
-	# 	replace_initial_board_for_tests(board, ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'])
-	# 	assert_equal([["0", "5", "10", '15'], ["3", "6", "9", '12']], board.diaganols)
-	# end
-
-	# def test_potantial_winning_lines
-	# 	board = Board.new(3, 3)
-	# 	replace_initial_board_for_tests(board, ["0", "1", "2", "3", "4", "5", "6", "7", "8"])
-	# 	assert_equal([['0', '1', '2'], ['3', '4', '5'], ['6', '7', '8'], ["0", "3", "6"], ["1", "4", "7"], ["2", "5", "8"],["0", "4", "8"], ["2", "4", "6"]], board.potential_winning_lines)
-	# end
-
-	# def test_potantial_winning_lines_2
-	# 	board = Board.new(5, 5)
-	# 	test_board = Array (0..24)
-	# 	replace_initial_board_for_tests(board, test_board)		
-	# 	number_winning_lines = board.potential_winning_lines
-	# 	assert_equal(12, number_winning_lines.length)
-	# end
-
-	def test_empty_space_returns_true_with_empty_space?
-		board = Board.new(3, 3)
-		assert_equal(true, board.empty_space?(0))
-	end
-
-	def test_occupied_space_returns_true_with_empty_space?
-		board = Board.new(3, 3)
-		replace_initial_board_for_tests(board, ['X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '])
-		assert_equal(false, board.empty_space?(0))
-	end
-
-	def test_empty_board_returns_false_with_tie?
-		board = Board.new(4, 4)
-		assert_equal(false, board.tie?)
-	end
-
-	def test_partial_full_board_returns_false_with_tie?
+	def test_board_with_spaces_and_no_win_returns_false_for_game_end?
 		board = Board.new(3, 3)
 		replace_initial_board_for_tests(board, ['X', ' ', 'O', 'X', ' ', ' ', ' ', ' ', ' '])
-		assert_equal(false, board.tie?)
+		assert_equal(false, board.game_end?)
 	end
 
-	def test_full_board_returns_true_with_tie?
+	def test_full_board_without_win_returns_true_with_game_end?
 		board = Board.new(3, 3) 
 		replace_initial_board_for_tests(board, ['X', 'X', 'O', 'O', 'O', 'X', 'X', 'O', 'X'])
-		assert_equal(true, board.tie?)
+		assert_equal(true, board.game_end?)
 	end
 
 	def test_empty_board_returns_false_for_X_win?
@@ -158,14 +115,32 @@ class TestBoard < Minitest::Test
 		assert_equal(false, board.win?('O'))
 	end
 
-	def test_marker_to_play_first_is_X
+	def test_marker_just_played_3x3_board
+		board = Board.new(3, 3)
+		replace_initial_board_for_tests(board, ['X', 'O', 'X', ' ', ' ', ' ', ' ', ' ', ' '])
+		assert_equal('X', board.marker_just_played)
+	end
+
+	def test_marker_just_played_4x4_board
+		board = Board.new(4, 4)
+		replace_initial_board_for_tests(board, ['O', 'O', ' ', ' ', ' ', 'X', 'O', ' ', ' ', ' ', 'X', ' ', ' ', ' ', ' ', 'X'])
+		assert_equal('O', board.marker_just_played)
+	end
+
+	def test_marker_to_play_next_empty_3x3_board
 		board = Board.new(3, 3)
 		assert_equal('X', board.marker_to_play_next)
 	end
 
-	def test_marker_to_play_first_is_X_2
+	def test_marker_to_play_next_empty_4x4_board
 		board = Board.new(4, 4)
 		assert_equal('X', board.marker_to_play_next)
+	end
+
+	def test_marker_to_play_next_partial_board
+		board = Board.new(3, 3)
+		replace_initial_board_for_tests(board, ['X', 'O', 'X', ' ', ' ', ' ', ' ', ' ', ' '])
+		assert_equal('O', board.marker_to_play_next)
 	end
 
 	def test_next_sequential_space_available_empty_board
