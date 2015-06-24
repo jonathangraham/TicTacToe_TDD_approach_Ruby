@@ -23,12 +23,6 @@ class TestAI < Minitest::Test
 		assert_equal(3, position)
 	end
 
-	def test_generate_random_position
-		board = Board.new(2, 2) 
-		position = RandomAI.new('Comp').generate_random_position(board)
-		assert_equal(true, [0,1,2,3].include?(position))
-	end	
-
 	def test_generate_position_with_randomAI_single_option
 		board = Board.new(3, 3) 
 		replace_initial_board_for_tests(board, ['X', 'O', 'X', 'O', ' ', 'O', 'X', 'X', 'O'])
