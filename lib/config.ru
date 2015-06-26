@@ -1,2 +1,2 @@
-require './WebReadWrite'
-run WebReadWrite
+require './WebPlay'
+run WebAppStart
