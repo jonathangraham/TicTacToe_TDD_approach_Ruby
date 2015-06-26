@@ -1,12 +1,4 @@
 require '/Users/jonathangraham/TTT_TDD/lib/Board'
-require '/Users/jonathangraham/TTT_TDD/lib/SequentialAI'
-require '/Users/jonathangraham/TTT_TDD/lib/RandomAI'
-require '/Users/jonathangraham/TTT_TDD/lib/NegamaxAI'
-require '/Users/jonathangraham/TTT_TDD/lib/Human'
-require '/Users/jonathangraham/TTT_TDD/lib/Game'
-require '/Users/jonathangraham/TTT_TDD/lib/UI'
-require '/Users/jonathangraham/TTT_TDD/lib/ConsoleReadWrite'
-
 require 'minitest/autorun'
 
 def replace_initial_board_for_tests(board, test_board)
