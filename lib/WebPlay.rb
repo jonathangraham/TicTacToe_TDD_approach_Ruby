@@ -43,7 +43,7 @@ class WebAppStart < Sinatra::Base
     }
 
     @message = "Lets play! #{session[:current_player].name} (#{session[:current_player].marker}) to start"
-    erb :computer_form, :locals => session[:locals]
+    erb :status_form, :locals => session[:locals]
   end
 
   post '/CurrentStatus' do
@@ -85,7 +85,7 @@ class WebAppStart < Sinatra::Base
       session[:current_player] = game.determine_current_player
       next_player = session[:current_player]
       @message = "#{player.name} just played in position #{position}. #{next_player.name}, are you ready to play?"
-      erb :computer_form, :locals => session[:locals]
+      erb :status_form, :locals => session[:locals]
     end
   end
 
