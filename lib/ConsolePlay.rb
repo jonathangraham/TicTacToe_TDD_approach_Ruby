@@ -1,7 +1,7 @@
-require '/Users/jonathangraham/TTT_TDD/lib/Board'
-require '/Users/jonathangraham/TTT_TDD/lib/AI'
-require '/Users/jonathangraham/TTT_TDD/lib/Human'
-require '/Users/jonathangraham/TTT_TDD/lib/Game'
+require_relative 'Game'
+require_relative 'Board'
+require_relative 'AI'
+require_relative 'Human'
 
 class ConsoleStart
 

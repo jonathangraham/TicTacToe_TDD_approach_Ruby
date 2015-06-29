@@ -1,7 +1,7 @@
-require '/Users/jonathangraham/TTT_TDD/lib/Board'
-require '/Users/jonathangraham/TTT_TDD/lib/AI'
-require '/Users/jonathangraham/TTT_TDD/lib/Human'
-require '/Users/jonathangraham/TTT_TDD/lib/Game'
+require_relative '../lib/Game'
+require_relative '../lib/Board'
+require_relative '../lib/Human'
+require_relative '../lib/AI'
 
 require 'minitest/autorun'
 
@@ -38,6 +38,5 @@ class TestGame < Minitest::Test
 		replace_initial_board_for_tests(board, ['X', 'O', 'X', ' ', ' ', ' ', ' ', ' ', ' '])
 		assert_equal(game.player2, game.determine_current_player)
 	end
-	
-end
 
+end

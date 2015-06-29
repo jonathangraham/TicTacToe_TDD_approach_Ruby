@@ -1,7 +1,7 @@
-require '/Users/jonathangraham/TTT_TDD/lib/Board'
-require '/Users/jonathangraham/TTT_TDD/lib/AI'
-require '/Users/jonathangraham/TTT_TDD/lib/Human'
-require '/Users/jonathangraham/TTT_TDD/lib/Game'
+require_relative 'Game'
+require_relative 'Board'
+require_relative 'AI'
+require_relative 'Human'
 require 'sinatra'
 
 class WebAppStart < Sinatra::Base
@@ -42,6 +42,10 @@ class WebAppStart < Sinatra::Base
       'win_size' => session[:board].x_in_a_row
     }
 
+    redirect '/CurrentStatus'
+  end
+
+  get '/CurrentStatus' do
     @message = "Lets play! #{session[:current_player].name} (#{session[:current_player].marker}) to start"
     erb :status_form, :locals => session[:locals]
   end

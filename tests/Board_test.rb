@@ -1,4 +1,4 @@
-require '/Users/jonathangraham/TTT_TDD/lib/Board'
+require_relative '../lib/Board'
 require 'minitest/autorun'
 
 def replace_initial_board_for_tests(board, test_board)

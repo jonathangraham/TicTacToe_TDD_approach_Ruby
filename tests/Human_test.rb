@@ -1,4 +1,4 @@
-require '/Users/jonathangraham/TTT_TDD/lib/Human'
+require_relative '../lib/Human'
 
 require 'minitest/autorun'
 
