@@ -5,11 +5,11 @@ require '/Users/jonathangraham/TTT_TDD/lib/Game'
 
 require 'minitest/autorun'
 
-# def replace_initial_board_for_tests(board, test_board)
-# 	test_board.each_with_index do |e, i|
-# 		board.update_board(i, e)
-# 	end
-# end
+def replace_initial_board_for_tests(board, test_board)
+	test_board.each_with_index do |e, i|
+		board.update_board(i, e)
+	end
+end
 
 class TestGame < Minitest::Test
 
@@ -22,6 +22,18 @@ class TestGame < Minitest::Test
 		assert_equal(RandomAI, game.player2.class)
 		assert_equal('AI (level 2)', game.player2.name)
 		assert_equal('O', game.player2.marker)
+	end
+
+	def test_determine_current_player_new_board
+		game = Game.new('interface', 3, 3, ['ConsoleHuman', 'jon', ""], ['Computer', "", "2"])
+		assert_equal(game.player1, game.determine_current_player)
+	end
+
+	def test_determine_current_player_partial_board
+		game = Game.new('interface', 3, 3, ['ConsoleHuman', 'jon', ""], ['Computer', "", "2"])
+		board = game.board
+		replace_initial_board_for_tests(board, ['X', 'O', 'X', ' ', ' ', ' ', ' ', ' ', ' '])
+		assert_equal(game.player2, game.determine_current_player)
 	end
 
 end
