@@ -6,9 +6,6 @@ require 'sinatra'
 
 class WebAppStart < Sinatra::Base
 
-
-  #use database redis to store session data, and then rebuild object when id called
-
   enable :sessions
 
   get '/' do
@@ -64,16 +61,9 @@ class WebAppStart < Sinatra::Base
 
   get '/get_move' do
     player = session[:current_player]
-    #board = session[:board]
     game = session[:game]
     session[:position] = game.generate_move(player)
     redirect '/check_move'
-    # if game.valid_space?(session[:position])
-    #   redirect '/make_move'  
-    # else
-    #   @message = "#{player.name}: choose an available space to make your move!"
-    #   erb :human_form, :locals => session[:locals]
-    # end
   end
 
   get '/check_move' do
