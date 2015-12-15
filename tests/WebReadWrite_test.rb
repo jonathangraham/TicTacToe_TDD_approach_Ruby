@@ -20,6 +20,39 @@ class CurrentUserSession < Minitest::Test
       "board_size" => "3", "win_size" => "3"}
   end
 
+  def new_setup2
+    post'/new_game', {"player2" => "Human", "player2_name" => "test_name", "player2_level" => "", 
+      "player1" => "Computer", "player1_name" => "", "player1_level" => "1",
+      "board_size" => "3", "win_size" => "3"}
+  end
+
+  # def mock_setup
+  #   player1_info = ["Human", "test_name", ""]
+  #   player2_info = ["Computer", "", "1"]
+  #   players_info = [player1_info, player2_info]
+  #   board_size = 3
+  #   win_size = 3
+  #   # if win_size > board_size
+  #   #   win_size = board_size
+  #   # end
+
+  #   game = MockGame.new(WebAppStart, board_size, win_size, player1_info, player2_info)
+
+  #   # session[:game] = game
+  #   board = game.board
+  #   player1 = game.player1
+  #   player2 = game.player2
+  #   current_player = game.determine_current_player
+  #   locals = {
+  #     'board' => board.board,
+  #     'board_index' => board.index_board, 
+  #     'player1' => player1, 
+  #     'player2' => player2, 
+  #     'board_size' => board.grid_size, 
+  #     'win_size' => board.x_in_a_row
+  #   }
+  # end
+
   def test_it_redirects_to_new_game_with_root_url 
     get '/'
     follow_redirect!
@@ -68,7 +101,90 @@ class CurrentUserSession < Minitest::Test
     assert_equal 'Goodbye', last_response.body
   end
 
+  def test_get_move
+    new_setup
+    get '/get_move'
+    follow_redirect!
+    assert_equal "http://example.org/check_move", last_request.url
+  end
 
+  def test_check_move_opens_human_form_for_human_move
+    new_setup
+    get '/check_move'
+
+    assert last_response.ok?
+    assert last_response.body.include?('<form action="/get_move" method="POST">')
+  end
+
+  # def test_check_move_redirects_make_move_for_computer_move
+  #   new_setup2
+  #   get '/check_move'
+  #   follow_redirect!
+  #   assert_equal "http://example.org/check_move", last_request.url
+  # end
+
+
+
+end
+
+class MockGame
+
+  
+  attr_accessor :interface, :board, :player1, :player2, :current_player
+
+  def initialize(interface, board_size, win_size, player1_info, player2_info)
+    @interface = interface
+    @board = Board.new(board_size, win_size)
+    @player1 = player_setup(player1_info, 'X')
+    @player2 = player_setup(player2_info, 'O')
+  end
+
+  def determine_current_player
+    if board.marker_to_play_next == 'X'
+      return player1
+    else
+      return player2
+    end
+  end
+
+  def generate_move(current_player)
+    # current_player.determine_move(board)
+    5
+  end
+
+  def make_move(position)
+    board.update_board(position, board.marker_to_play_next)
+  end
+
+  def game_over?
+    board.game_end?
+  end
+
+  def valid_space?(position)
+    # board.valid_space?(position)
+    true
+  end
+  
+  private
+
+  def player_setup(players_info, marker)
+        type = players_info[0]
+        name = players_info[1]
+        level = players_info[2]
+        if type == 'ConsoleHuman'
+            ConsoleHuman.new(interface, name, marker)
+        elsif type == 'Human'
+          WebHuman.new(interface, name, marker)
+        else
+          if level == '1'
+            SequentialAI.new("AI (level #{level})", marker)
+          elsif level == '2'
+            RandomAI.new("AI (level #{level})", marker)
+          elsif level == '3'
+            NegamaxAI.new("AI (level #{level})", marker)
+          end
+        end
+    end
 end
 
 #class WebReadWriteTest < CurrentUserSession

@@ -5,9 +5,10 @@ require_relative 'Human'
 
 class ConsoleStart
 
-	attr_reader :game, :board, :player1, :player2, :current_player
+	attr_reader :ui, :game, :board, :player1, :player2, :current_player
 
-	def initialize()
+	def initialize(ui)
+		@ui = ui
 		@game = nil
 		@board = nil
 		@player1 = nil
@@ -16,14 +17,14 @@ class ConsoleStart
 	end 
 
 	def play_game?
-		ask_play?
-		if get_user_response.chomp.upcase == 'Y'
-			get_game_parameters
-			play_game 
-		else
-			exit
-		end
+		start_game if play?
 	end	
+
+	def start_game
+		get_game_parameters
+		play_game
+	end
+
 
 	def play_game
 		@current_player = game.determine_current_player
@@ -38,7 +39,7 @@ class ConsoleStart
 	end
 
 	def get_human_move()
-		position = get_user_response.to_i
+		position = ui.get_user_response.to_i
 		until game.valid_space?(position)
 			position = get_valid_space
 		end
@@ -47,18 +48,6 @@ class ConsoleStart
 
 
 	private
-
-	def print_line(str)
-		puts str
-	end
-
-	def read_line
-		gets.chomp.upcase
-	end
-
-	def get_user_response
-		read_line
-	end
 
 	def get_game_parameters
 		board_size = get_board_size
@@ -77,12 +66,12 @@ class ConsoleStart
 
 	def get_board_size()
 		ask_board_size
-		return get_user_response.to_i
+		return ui.get_user_response.to_i
 	end
 
 	def get_win_length()
 		ask_how_many_in_row
-		return get_user_response.to_i
+		return ui.get_user_response.to_i
 	end
 
 	def player_setup(number)
@@ -94,7 +83,7 @@ class ConsoleStart
 
 	def player_type(number)
 		ask_player_type(number)
-		player_type = get_user_response
+		player_type = ui.get_user_response
 		if player_type == 'H'
 			return 'ConsoleHuman'
 		elsif player_type == 'C'
@@ -107,7 +96,7 @@ class ConsoleStart
 	def player_level(type)
 		if type == 'Computer'
 			ask_computer_level
-			level = get_user_response
+			level = ui.get_user_response
 			if ['1', '2', '3'].include?(level)
 				return level
 			else
@@ -119,32 +108,33 @@ class ConsoleStart
 	def player_name(type)
 		if type == 'ConsoleHuman'
 			ask_player_name
-			return get_user_response
+			return ui.get_user_response
 		end
 	end
 
-	def ask_play?()
-		print_line("Press Y to play new game.")
+	def play?()
+		ui.print_line("Press Y to play new game.")
+		ui.get_user_response.chomp.upcase == 'Y'
 	end
 
 	def ask_board_size()
-		print_line("Board size? (eg type '3' for a 3x3 board)")
+		ui.print_line("Board size? (eg type '3' for a 3x3 board)")
 	end
 
 	def ask_how_many_in_row()
-		print_line("How many in a row needed to win? Can't be more than board size.")
+		ui.print_line("How many in a row needed to win? Can't be more than board size.")
 	end
 
 	def ask_player_type(number)
-		print_line("Player #{number}: Human(H) or Computer(C)?")
+		ui.print_line("Player #{number}: Human(H) or Computer(C)?")
 	end
 
 	def ask_player_name
-		print_line("What is your name?")
+		ui.print_line("What is your name?")
 	end
 
 	def ask_computer_level
-		print_line("Easy(1), Moderate(2) or Hard(3)?")
+		ui.print_line("Easy(1), Moderate(2) or Hard(3)?")
 	end
 
 	def display_current_status()
@@ -162,28 +152,45 @@ class ConsoleStart
 	def print_board(board)
 		lines = board.each_slice(Math.sqrt(board.length)).to_a
 		lines.each do |line|
-			print_line("#{line.join('|')}")
+			ui.print_line("#{line.join('|')}")
 		end
 	end
 
 	def print_player_turn(player)
-		print_line("#{player.name} to go next. Where do you want to play")
+		ui.print_line("#{player.name} to go next. Where do you want to play")
 	end
 
 	def get_valid_space
-		print_line("Please enter a valid space")
-		get_user_response.to_i
+		ui.print_line("Please enter a valid space")
+		ui.get_user_response.to_i
 	end
 
 	def print_result(board, player)
 		if board.win?(player.marker)
-			print_line("#{player.name} wins!")
+			ui.print_line("#{player.name} wins!")
 		else
-			print_line("Game tied")
+			ui.print_line("Game tied")
 		end
 	end
 
 end
 
-console = ConsoleStart.new
+class ConsoleReadWrite
+
+	def print_line(str)
+		puts str
+	end
+
+	def read_line
+		gets.chomp.upcase
+	end
+
+	def get_user_response
+		read_line
+	end
+
+end
+
+read_write = ConsoleReadWrite.new
+console = ConsoleStart.new(read_write)
 console.play_game?
